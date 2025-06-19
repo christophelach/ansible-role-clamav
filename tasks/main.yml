@@ -16,38 +16,6 @@
     - Stop clamav
     - Update virus definitions
 
-- name: Manage selinux settings
-  when:
-    - ansible_selinux is defined
-    - ansible_selinux.status == "enabled"
-  block:
-    - name: Allowing system virus scanning
-      ansible.posix.seboolean:
-        name: antivirus_can_scan_system
-        state: true
-        persistent: true
-
-    - name: Allowing jit
-      ansible.posix.seboolean:
-        name: clamd_use_jit
-        state: true
-        persistent: true
-
-    - name: Install required selinux software
-      ansible.builtin.package:
-        name: "{{ clamav_requirements }}"
-        state: present
-
-    - name: Place selinux type enforcement
-      ansible.builtin.copy:
-        src: my-clamd.te
-        dest: /etc/my-clamd.te
-        mode: "0640"
-      notify:
-        - Create selinux mod for clamav
-        - Create selinux pp for clamav
-        - Load selinux pp for clamav
-
 - name: Place freshclam.conf
   ansible.builtin.template:
     src: freshclam.conf.j2
