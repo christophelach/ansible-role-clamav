@@ -8,7 +8,7 @@
   delegate_to: localhost
 
 - name: Install clamav software
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: "{{ clamav_packages }}"
     state: present
   notify:
